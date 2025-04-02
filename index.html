@@ -1,0 +1,50 @@
+// Seizure Score Calculator with Probability Output
+// Assigns points based on clinical and biochemical features and calculates estimated probability
+
+function calculateSeizureScore(inputs) {
+  let score = 0;
+
+  if (inputs.tongueBite) score += 2;
+  if (inputs.postIctalDrowsiness) score += 2;
+  if (inputs.nocturnalEvent) score += 2;
+  if (inputs.lowPhosphate) score += 2;
+  if (inputs.involuntaryJerks) score += 1;
+  if (inputs.urineIncontinence) score += 1;
+  if (inputs.lactateElevated) score += 1;
+
+  return score;
+}
+
+function calculateProbability(score) {
+  // Coefficients derived from logistic regression (example: intercept and score weight)
+  const intercept = -2.5;
+  const scoreWeight = 0.5;
+
+  const logOdds = intercept + scoreWeight * score;
+  const probability = 1 / (1 + Math.exp(-logOdds));
+  return probability;
+}
+
+// Example usage
+const patientInput = {
+  tongueBite: true,
+  postIctalDrowsiness: false,
+  nocturnalEvent: true,
+  lowPhosphate: true,
+  involuntaryJerks: true,
+  urineIncontinence: false,
+  lactateElevated: true
+};
+
+const totalScore = calculateSeizureScore(patientInput);
+const probability = calculateProbability(totalScore);
+console.log(`Seizure Score: ${totalScore}`);
+console.log(`Estimated Probability of True Seizure: ${(probability * 100).toFixed(1)}%`);
+
+// Export for use in a frontend or Node.js app
+if (typeof module !== 'undefined') {
+  module.exports = {
+    calculateSeizureScore,
+    calculateProbability
+  };
+}
