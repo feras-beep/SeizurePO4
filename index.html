@@ -6,23 +6,55 @@
   <title>Seizure Score Calculator</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      max-width: 600px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      padding: 30px;
+      max-width: 700px;
       margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     label {
       display: block;
-      margin-top: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      margin-right: 10px;
     }
     button {
       margin-top: 20px;
-      padding: 10px 15px;
+      width: 100%;
+      padding: 12px;
       font-size: 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
     }
     .result {
-      margin-top: 20px;
-      font-weight: bold;
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #e9f7ef;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      border-radius: 10px;
+      font-size: 18px;
+      text-align: center;
     }
   </style>
 </head>
@@ -35,7 +67,7 @@
     <label><input type="checkbox" name="lowPhosphate"> Hypophosphatemia (PO₄ low)</label>
     <label><input type="checkbox" name="involuntaryJerks"> Involuntary jerks</label>
     <label><input type="checkbox" name="urineIncontinence"> Urinary incontinence</label>
-    <label><input type="checkbox" name="lactateElevated"> Elevated lactate (>2.0)</label>
+    <label><input type="checkbox" name="lactateElevated"> Elevated lactate (&gt;2.0)</label>
 
     <button type="submit">Calculate</button>
   </form>
@@ -77,9 +109,10 @@
       const score = calculateSeizureScore(inputs);
       const probability = calculateProbability(score);
 
-      document.getElementById('result').textContent = `Seizure Score: ${score}\nEstimated Probability of True Seizure: ${(probability * 100).toFixed(1)}%`;
+      document.getElementById('result').innerHTML =
+        `Seizure Score: <strong>${score}</strong><br>` +
+        `Estimated Probability of True Seizure: <strong>${(probability * 100).toFixed(1)}%</strong>`;
     });
   </script>
 </body>
 </html>
-
