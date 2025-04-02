@@ -1,50 +1,85 @@
-// Seizure Score Calculator with Probability Output
-// Assigns points based on clinical and biochemical features and calculates estimated probability
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seizure Score Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Seizure Score Calculator</h1>
+  <form id="scoreForm">
+    <label><input type="checkbox" name="tongueBite"> Tongue bite</label>
+    <label><input type="checkbox" name="postIctalDrowsiness"> Post-ictal drowsiness</label>
+    <label><input type="checkbox" name="nocturnalEvent"> Nocturnal event</label>
+    <label><input type="checkbox" name="lowPhosphate"> Hypophosphatemia (PO₄ low)</label>
+    <label><input type="checkbox" name="involuntaryJerks"> Involuntary jerks</label>
+    <label><input type="checkbox" name="urineIncontinence"> Urinary incontinence</label>
+    <label><input type="checkbox" name="lactateElevated"> Elevated lactate (>2.0)</label>
 
-function calculateSeizureScore(inputs) {
-  let score = 0;
+    <button type="submit">Calculate</button>
+  </form>
 
-  if (inputs.tongueBite) score += 2;
-  if (inputs.postIctalDrowsiness) score += 2;
-  if (inputs.nocturnalEvent) score += 2;
-  if (inputs.lowPhosphate) score += 2;
-  if (inputs.involuntaryJerks) score += 1;
-  if (inputs.urineIncontinence) score += 1;
-  if (inputs.lactateElevated) score += 1;
+  <div class="result" id="result"></div>
 
-  return score;
-}
+  <script>
+    function calculateSeizureScore(inputs) {
+      let score = 0;
+      if (inputs.tongueBite) score += 2;
+      if (inputs.postIctalDrowsiness) score += 2;
+      if (inputs.nocturnalEvent) score += 2;
+      if (inputs.lowPhosphate) score += 2;
+      if (inputs.involuntaryJerks) score += 1;
+      if (inputs.urineIncontinence) score += 1;
+      if (inputs.lactateElevated) score += 1;
+      return score;
+    }
 
-function calculateProbability(score) {
-  // Coefficients derived from logistic regression (example: intercept and score weight)
-  const intercept = -2.5;
-  const scoreWeight = 0.5;
+    function calculateProbability(score) {
+      const intercept = -2.5;
+      const scoreWeight = 0.5;
+      const logOdds = intercept + scoreWeight * score;
+      return 1 / (1 + Math.exp(-logOdds));
+    }
 
-  const logOdds = intercept + scoreWeight * score;
-  const probability = 1 / (1 + Math.exp(-logOdds));
-  return probability;
-}
+    document.getElementById('scoreForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const inputs = {
+        tongueBite: form.tongueBite.checked,
+        postIctalDrowsiness: form.postIctalDrowsiness.checked,
+        nocturnalEvent: form.nocturnalEvent.checked,
+        lowPhosphate: form.lowPhosphate.checked,
+        involuntaryJerks: form.involuntaryJerks.checked,
+        urineIncontinence: form.urineIncontinence.checked,
+        lactateElevated: form.lactateElevated.checked
+      };
+      const score = calculateSeizureScore(inputs);
+      const probability = calculateProbability(score);
 
-// Example usage
-const patientInput = {
-  tongueBite: true,
-  postIctalDrowsiness: false,
-  nocturnalEvent: true,
-  lowPhosphate: true,
-  involuntaryJerks: true,
-  urineIncontinence: false,
-  lactateElevated: true
-};
+      document.getElementById('result').textContent = `Seizure Score: ${score}\nEstimated Probability of True Seizure: ${(probability * 100).toFixed(1)}%`;
+    });
+  </script>
+</body>
+</html>
 
-const totalScore = calculateSeizureScore(patientInput);
-const probability = calculateProbability(totalScore);
-console.log(`Seizure Score: ${totalScore}`);
-console.log(`Estimated Probability of True Seizure: ${(probability * 100).toFixed(1)}%`);
-
-// Export for use in a frontend or Node.js app
-if (typeof module !== 'undefined') {
-  module.exports = {
-    calculateSeizureScore,
-    calculateProbability
-  };
-}
